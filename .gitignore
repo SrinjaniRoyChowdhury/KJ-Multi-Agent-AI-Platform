@@ -30,7 +30,8 @@ credentials/
 credentials.json
 client_secret*.json
 service-account*.json
-service_account*.json
+service-account*.json
+serviceAccount*.json
 *.keystore
 *.jks
 *.ovpn
