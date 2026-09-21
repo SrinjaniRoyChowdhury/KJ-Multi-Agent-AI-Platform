@@ -1,16 +1,19 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-const userSchema = new mongoose.userSchema({
+const userSchema = new mongoose.Schema(
+  {
     firebaseUid: {
-        type:String,
-        unique:true
+      type: String,
+      unique: true,
     },
-    name:String,
-    email:String,
-    avatar:String
-}, {
-    timestamps:true
-})
+    name: String,
+    email: String,
+    avatar: String,
+  },
+  {
+    timestamps: true,
+  },
+);
 
-const User = mongoose.model("User", userSchema)
-export default User
+const User = mongoose.model("User", userSchema);
+export default User;
