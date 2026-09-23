@@ -6,7 +6,7 @@ import redis from "../../../shared/redis/redis.js";
 export const login = async (req, res) => {
   try {
     const { token } = req.body;
-    const decoded = getAuth(app).verifyIdToken(token);
+    const decoded = await getAuth(app).verifyIdToken(token);
     let user = await User.findOne({
       firebaseUid: decoded.uid,
     });
@@ -18,29 +18,29 @@ export const login = async (req, res) => {
         email: decoded.email,
         avatar: decoded.picture,
       });
-
-      const sessionId = crypto.randomUUID();
-      await redis.set(
-        `session-${sessionId}`,
-        JSON.stringify({
-          userId: user._id,
-          name: user.name,
-          email: user.email,
-          avatar: user.avatar,
-        }),
-        "EX",
-        7 * 24 * 60 * 60,
-      );
-
-      res.cookie("session", sessionId, {
-        httpOnly: true,
-        secure: false, // false cuz in dev , true for production
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-      });
-
-      return res.status(200).json(user);
     }
+
+    const sessionId = crypto.randomUUID();
+    await redis.set(
+      `session-${sessionId}`,
+      JSON.stringify({
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+      }),
+      "EX",
+      7 * 24 * 60 * 60,
+    );
+
+    res.cookie("session", sessionId, {
+      httpOnly: true,
+      secure: false, // false cuz in dev , true for production
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
+    return res.status(200).json(user);
   } catch (error) {
     return res.status(500).json({ message: `Login error: ${error}` });
   }
