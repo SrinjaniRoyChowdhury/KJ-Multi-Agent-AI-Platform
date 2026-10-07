@@ -1,7 +1,8 @@
-import { Anotation } from '@langchain/langgraph'
+import { Annotation } from '@langchain/langgraph'
 
-export const agentState=Anotation.Root({
-    prompt:Anottation(),
-    aiResponse:Anotation(),
-    agent:Anotation()
+export const agentState=Annotation.Root({
+    prompt:Annotation(),
+    aiResponse:Annotation(),
+    agent:Annotation(),
+    conversationId:Annotation()
 })
