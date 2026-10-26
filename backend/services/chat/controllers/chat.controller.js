@@ -6,6 +6,10 @@ export const createConversation = async (req, res) => {
         const userId = req.headers["x-user-id"];
         console.log("userId:", userId);
 
+        if (!userId) {
+            return res.status(401).json({ message: "User not authenticated" });
+        }
+
         const conversation = await Conversation.create({
             userId,
         });
@@ -22,6 +26,10 @@ export const getConversations = async (req, res) => {
     try {
         const userId = req.headers["x-user-id"];
         console.log("userId:", userId);
+
+        if (!userId) {
+            return res.status(200).json([]);
+        }
 
         const conversations = await Conversation.find({
             userId,
@@ -40,7 +48,7 @@ export const updateConversation = async (req, res) => {
         const {id,title} = req.body
         const conversations = await Conversation.findByIdAndUpdate(id,{
             title
-        });
+        }, { new: true });
 
         return res.status(200).json(conversations);
     } catch (error) {

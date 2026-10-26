@@ -24,6 +24,7 @@ export const login = async (req, res) => {
     await redis.set(
       `session-${sessionId}`,
       JSON.stringify({
+        _id: user._id,
         userId: user._id,
         name: user.name,
         email: user.email,
@@ -48,10 +49,21 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    const sessionId = req.cookies?.sessionId;
-    await redis.del(`session-${sessionId}`);
+    let sessionId = req.cookies?.session;
+    if (!sessionId && req.headers?.cookie) {
+      const match = req.headers.cookie.match(/(?:^|;\s*)session=([^;]+)/);
+      if (match) sessionId = decodeURIComponent(match[1]);
+    }
 
-    res.clearCookie("session");
+    if (sessionId) {
+      await redis.del(`session-${sessionId}`);
+    }
+
+    res.clearCookie("session", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+    });
     return res.status(200).json({ message: "logout successfully" });
   } catch (error) {
     res.status(500).json({ message: `Logout error: ${error}` });
