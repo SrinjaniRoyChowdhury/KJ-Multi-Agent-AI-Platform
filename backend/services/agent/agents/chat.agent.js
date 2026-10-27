@@ -43,6 +43,6 @@ export const chatAgent=async (state)=> {
 
     return {
         ...state,
-        airesponse:response.content
+        aiResponse:response.content
     }
 }

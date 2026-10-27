@@ -11,14 +11,18 @@ function ChatArea() {
     const dispatch=useDispatch()
     useEffect(()=> {
         const getMesg=async() => {
-            if(selectedConversation) {
-                const data=await getMessages(selectedConversation?._id)
-                dispatch(setMessages(data))
+            if(!selectedConversation?._id) {
+                dispatch(setMessages([]))
+                return
             }
-            
+            if(selectedConversation?.isNew) {
+                return
+            }
+            const data=await getMessages(selectedConversation?._id)
+            dispatch(setMessages(Array.isArray(data) ? data : []))
         }
         getMesg()
-    },[selectedConversation])
+    },[selectedConversation?._id])
     return (
         <div className='flex-1 flex flex-col'>
             <Nav/>

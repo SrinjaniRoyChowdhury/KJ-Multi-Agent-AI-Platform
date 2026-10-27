@@ -14,8 +14,8 @@ export const getMemory=async (conversationId)=> {
     return messages
 }
 
-// stores latest 20 messagesin redis
-export const addMessage=async (conversationId,role,content)=>{
+// stores latest 20 messages in redis
+export const addMessage=async ({conversationId,role,content})=>{
     const key=`messages-${conversationId}`
     const rawMessages=await redis.get(key)
     const messages=rawMessages?JSON.parse(rawMessages):[]

@@ -1,11 +1,11 @@
 import Markdown from 'react-markdown'
 
 function MessageBubble({role,content}) {
-    const isUser=role==="User"
+    const isUser=role==="user"
 
     return (
-        <div className={`flex ${isUser} ? "justify-end": "justify-start"`}>
-            <div className={`max-w-[72%] px-4 py-2.5 rounded-2xl text-[135px] leading-relaxed
+        <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+            <div className={`max-w-[72%] px-4 py-2.5 rounded-2xl text-[13.5px] leading-relaxed
                 ${
                     isUser
                     ? "bg-linear-to-br from-indigo-950 to-teal-950 text-white rounded-tr-sm"

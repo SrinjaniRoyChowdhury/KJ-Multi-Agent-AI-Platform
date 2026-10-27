@@ -11,18 +11,20 @@ const groq = new ChatGroq({
 })
 
 const gemini = new ChatGoogleGenerativeAI({
-    model: "gemini-2.5-flash"
+    model: "gemini-3.8-flash"
 })
 
 export const getModel=(agent)=>{
     switch (agent) {
         case "chat":   
             return groq;
+        case "router":
+            return groq;
         case "search":   
             return groq;
         case "coding":   
-            return gemini;
+            return groq;
         default:
-            return gemini;
+            return groq;
     }
 }
