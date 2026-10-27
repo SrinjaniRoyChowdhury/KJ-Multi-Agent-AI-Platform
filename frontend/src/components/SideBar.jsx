@@ -50,13 +50,6 @@ function SideBar() {
           : response?.conversations || [];
 
         dispatch(setConversation(conversationList));
-
-        // If nothing selected or previous selection no longer exists, select first conversation
-        if (conversationList.length > 0) {
-          dispatch(setSelectedConversation(conversationList[0]));
-        } else {
-          dispatch(setSelectedConversation(null));
-        }
       } catch (error) {
         console.error("Failed to fetch conversations:", error);
       }
