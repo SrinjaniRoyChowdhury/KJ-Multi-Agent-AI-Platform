@@ -6,9 +6,21 @@ export const chatAgent=async (state)=> {
     const llm= await getModel("chat")
     const history=await getMemory(state.conversationId)
 
+    const searchContext = state.searchResults?`
+    Web Search Results:
+    ${JSON.stringify(state.searchResults)}
+    Answer the user using only the above search results.
+    `: ""
+
     const systemPrompt=`
     You are KJ, an intelligent AI assitent.
 
+    ${searchContext}
+
+    If searchContext exists:
+    - Use search results to answer.
+    - Do not mention internal tools.
+    
     Rules:
     - For simple questions, greetings, and short queries, respond naturally in plain text.
     - For technical, educational, coding, or detailed topics, use clean Markdown.
@@ -23,7 +35,6 @@ export const chatAgent=async (state)=> {
     - Never write headings and content on the same line. 
     - Never generate large walls of text.
     `
-
     const messages=[
         new SystemMessage(systemPrompt)
     ]

@@ -17,8 +17,8 @@ const saveMessage = async (conversationId, role, content) => {
 
 export const agent = async (req, res) => {
   try {
-    const { prompt, conversationId } = req.body;
-    console.log("📨 Agent called:", { prompt: prompt?.slice(0, 50), conversationId });
+    const { prompt, conversationId, agent } = req.body;
+    console.log(" Agent called:", { prompt: prompt?.slice(0, 50), conversationId });
 
     if (!prompt) {
       return res.status(400).json({ message: "prompt is required" });
@@ -28,15 +28,15 @@ export const agent = async (req, res) => {
     await saveMessage(conversationId, "user", prompt);
 
     // Run the agent graph
-    console.log("🔁 Invoking graph...");
-    const result = await graph.invoke({ prompt, conversationId });
+    console.log("Invoking graph...");
+    const result = await graph.invoke({ prompt, conversationId, agent });
 
-    console.log("✅ Graph result keys:", Object.keys(result));
+    console.log("Graph result keys:", Object.keys(result));
     const response = result.aiResponse;
-    console.log("🤖 aiResponse:", typeof response, response?.slice?.(0, 80));
+    console.log("aiResponse:", typeof response, response?.slice?.(0, 80));
 
     if (!response) {
-      console.error("❌ aiResponse is undefined. Full result:", JSON.stringify(result));
+      console.error("aiResponse is undefined. Full result:", JSON.stringify(result));
       return res.status(500).json({ message: "Agent produced no response" });
     }
 
@@ -44,12 +44,17 @@ export const agent = async (req, res) => {
     await addMessage({ conversationId, role: "user", content: prompt });
     await addMessage({ conversationId, role: "assistant", content: response });
 
-    // Save assistant message to DB (non-fatal)
-    await saveMessage(conversationId, "assistant", response);
+    await axios.post(`${process.env.CHAT_SERVICE}/save-messages`, {
+      conversationId,role:"assistant",content:result.aiResponse,images:result.images
+    })
 
-    return res.status(200).json(response);
+    return res.status(200).json({
+      answer:result.aiResponse,
+      images:result.images
+    });
+
   } catch (error) {
-    console.error("💥 Agent error:", error.message);
+    console.error("Agent error:", error.message);
     console.error(error.stack);
     return res.status(500).json({ message: `Agent error: ${error.message}` });
   }
