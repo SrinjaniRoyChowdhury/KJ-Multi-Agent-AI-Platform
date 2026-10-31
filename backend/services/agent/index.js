@@ -1,5 +1,7 @@
 import express from "express"
-import  router  from "./routes/agent.route.js"
+import dotenv from "dotenv"
+dotenv.config()
+import router from "./routes/agent.route.js"
 
 const port=process.env.PORT
 

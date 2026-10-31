@@ -3,15 +3,19 @@ import { graph } from "../graph/graph.js";
 import { addMessage } from "../config/memory.js";
 
 // Helper - non-fatal save so a DB error never kills the agent response
-const saveMessage = async (conversationId, role, content) => {
+const saveMessage = async (conversationId, role, content, images = []) => {
   try {
     await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
       conversationId,
       role,
       content,
+      images,
     });
   } catch (err) {
-    console.warn(`⚠️  save-message failed (${role}):`, err?.response?.data?.message || err.message);
+    console.warn(
+      `Save message failed (${role}):`,
+      err?.response?.data?.message || err.message
+    );
   }
 };
 
@@ -44,13 +48,17 @@ export const agent = async (req, res) => {
     await addMessage({ conversationId, role: "user", content: prompt });
     await addMessage({ conversationId, role: "assistant", content: response });
 
-    await axios.post(`${process.env.CHAT_SERVICE}/save-messages`, {
-      conversationId,role:"assistant",content:result.aiResponse,images:result.images
-    })
+    await saveMessage(
+      conversationId,
+      "assistant",
+      result.aiResponse,
+      result.images || []
+    );
 
     return res.status(200).json({
-      answer:result.aiResponse,
-      images:result.images
+      content: result.aiResponse,
+      answer: result.aiResponse,
+      images: result.images || [],
     });
 
   } catch (error) {

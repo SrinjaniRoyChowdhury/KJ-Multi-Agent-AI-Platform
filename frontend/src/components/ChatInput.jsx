@@ -51,8 +51,17 @@ function ChatInput() {
     // Agent backend handles saving both messages to DB
     const data = await sendMessage(payload);
     if (data) {
-      const assistantContent = typeof data === "string" ? data : (data.content || data.aiResponse || data.message || JSON.stringify(data));
-      dispatch(addMessages({ role: "assistant", content: assistantContent, images:data.images}));
+      const assistantContent =
+        typeof data === "string"
+          ? data
+          : data.content || data.answer || data.aiResponse || data.message || "";
+      dispatch(
+        addMessages({
+          role: "assistant",
+          content: assistantContent,
+          images: data.images || [],
+        }),
+      );
     } else {
       dispatch(addMessages({ role: "assistant", content: "Sorry, I encountered an error while processing your request. Please try again." }));
     }

@@ -2,9 +2,10 @@ import { getModel } from "../config/llmModels.js";
 
 export const router = async (state) => {
   if (state.agent && state.agent !== "auto") {
+    const agent = state.agent.toLowerCase();
     return {
       ...state,
-      agent: state.agent
+      agent: agent === "image" ? "vision" : agent,
     };
   }
   const llm = await getModel("router");

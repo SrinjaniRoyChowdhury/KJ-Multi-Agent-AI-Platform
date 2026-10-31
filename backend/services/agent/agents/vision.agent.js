@@ -1,1 +1,3 @@
-export const visionAgent = async (params) => {}
+import { searchAgent } from "./search.agent.js";
+
+export const visionAgent = searchAgent;

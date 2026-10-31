@@ -6,11 +6,19 @@ export const chatAgent=async (state)=> {
     const llm= await getModel("chat")
     const history=await getMemory(state.conversationId)
 
-    const searchContext = state.searchResults?`
+    let searchContext = "";
+    if (state.searchResults) {
+      const resultsList = Array.isArray(state.searchResults?.results)
+        ? state.searchResults.results
+            .map((r) => `${r.title}: ${r.content}`)
+            .join("\n\n")
+        : JSON.stringify(state.searchResults);
+      searchContext = `
     Web Search Results:
-    ${JSON.stringify(state.searchResults)}
-    Answer the user using only the above search results.
-    `: ""
+    ${resultsList}
+    Answer the user using the above search results.
+    `;
+    }
 
     const systemPrompt=`
     You are KJ, an intelligent AI assitent.

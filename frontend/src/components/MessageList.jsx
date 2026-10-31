@@ -11,7 +11,7 @@ function MessageList() {
   }, [messages]);
 
     return (
-        <div className='flex-1 overflow-y-auto px-6 py-6 space-y-5 [scrollbar-width:none] [&::webkit-scrollbar]:hidden'>
+        <div className='flex-1 overflow-y-auto px-6 py-6 space-y-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'>
             {messages.length==0 ? (
             <div className='h-full flex flex-col items-center justify-center gap-4 text-center'>
                 <div className='flex flex-col gap-1.5'>
@@ -28,10 +28,10 @@ function MessageList() {
                 </div>
             </div>    
             ):
-            <div className='flex flex-col gap-3'>
+            <div className='space-y-5'>
                 {messages?.map((msg,i)=>(
                     <div key={msg?._id || i}>
-                        <MessageBubble role={msg?.role} content={msg?.content}/>
+                        <MessageBubble role={msg?.role} content={msg?.content} images={msg?.images || []}/>
                     </div>
                 ))}
                 <div ref={bottomRef} />
